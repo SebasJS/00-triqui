@@ -10,8 +10,15 @@ import './App.css'
 
 
 function App() {
-  const [board, setBoard] = useState(Array(9).fill(null))
-  const [turn, setTurn] = useState(TURNS.X)
+  const [board, setBoard] = useState(() => {
+    const boardLocalStorage = window.localStorage.getItem('board')
+    return boardLocalStorage ? JSON.parse(boardLocalStorage) : 
+    Array(9).fill(null)
+  })
+  const [turn, setTurn] = useState(() => {
+    const turnLocalStorage = window.localStorage.getItem('turn')
+    return turnLocalStorage ? turnLocalStorage : TURNS.X
+  })
   const [winner, setWinner] = useState(null)
 
 
@@ -29,6 +36,9 @@ function App() {
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
     setTurn(newTurn)
 
+    window.localStorage.setItem('board', JSON.stringify(newBoard))
+    window.localStorage.setItem('turn', newTurn)
+
     const newWinner = checkWinnerFrom(newBoard)
 
     if(newWinner){
@@ -44,6 +54,8 @@ function App() {
     setBoard(Array(9).fill(null))
     setTurn(TURNS.X)
     setWinner(null)
+    window.localStorage.removeItem('turn')
+    window.localStorage.removeItem('board')
   }
 
   return (
